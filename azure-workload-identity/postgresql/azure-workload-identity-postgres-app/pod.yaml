@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: java-postgres-wi-service
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: testing
+  containers:
+    - name: java-postgres-wi-service
+      image: docker.io/darkhero101/java-postgres-wi-service:14.0.0
+      imagePullPolicy: Always
+      volumeMounts:
+        - mountPath: /mnt/data
+          name: java-postgres-wi-storage
+  volumes:
+    - name: java-postgres-wi-storage
+      persistentVolumeClaim:
+        claimName: java-postgres-wi-pvc

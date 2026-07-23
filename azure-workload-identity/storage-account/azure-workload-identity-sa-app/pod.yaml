@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: java-sa-wi-service
+  labels:
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: testing
+  containers:
+    - name: java-sa-wi-service
+      image: docker.io/darkhero101/java-sa-wi-service:4.0.0
+      imagePullPolicy: Always
+      volumeMounts:
+        - mountPath: /mnt/data
+          name: java-sa-wi-storage
+  volumes:
+    - name: java-sa-wi-storage
+      persistentVolumeClaim:
+        claimName: java-sa-wi-pvc

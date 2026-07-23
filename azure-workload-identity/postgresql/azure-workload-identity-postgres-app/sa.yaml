@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    azure.workload.identity/client-id: fade8131-92db-49f6-9264-baec69eee01a
+    azure.workload.identity/tenant-id: 4226c1de-24e6-4d6f-b050-b14a85140192
+  name: testing

@@ -1,0 +1,109 @@
+# Sample Kubernetes Manifests for Azure Workload Identity
+#
+# Prerequisites:
+# 1. Replace <RESOURCE_GROUP>, <SUBSCRIPTION_ID>, <TENANT_ID> with your values
+# 2. Create the managed identity and federated credentials as described in README.md
+# 3. Grant Storage Blob Data Contributor role to the managed identity
+
+---
+# ServiceAccount with Workload Identity labels and annotations
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: azure-storage-sa
+  namespace: default
+  labels:
+    app: azure-storage-upload
+    azure.workload.identity/use: "true"
+  annotations:
+    # These values should match your User-Assigned Managed Identity
+    azure.workload.identity/client-id: "<USER_ASSIGNED_IDENTITY_CLIENT_ID>"
+    azure.workload.identity/tenant-id: "<TENANT_ID>"
+
+---
+# Pod that runs the Azure Storage Upload Service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: storage-upload-pod
+  namespace: default
+  labels:
+    app: azure-storage-upload
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: azure-storage-sa
+  containers:
+    - name: app
+      image: "<ACR_NAME>.azurecr.io/azure-workload-identity-app:v1.0.0"
+      imagePullPolicy: Always
+      env: []
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      volumeMounts:
+        # Mount the projected volume containing the federated token
+        - name: azure-identity-token
+          mountPath: /var/run/secrets/azure/tokens
+          readOnly: true
+  volumes:
+    # Projected volume with service account token for Workload Identity
+    - name: azure-identity-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              audience: api://AzureADTokenExchange
+              expirationSeconds: 3600
+              path: azure-identity-token
+  # Optional: Add image pull secret if using private registry
+  # imagePullSecrets:
+  # - name: acr-secret
+  restartPolicy: Never
+
+---
+# Optional: CronJob for running the service on a schedule
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: storage-upload-cronjob
+  namespace: default
+spec:
+  # Run daily at midnight
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: azure-storage-upload
+            azure.workload.identity/use: "true"
+        spec:
+          serviceAccountName: azure-storage-sa
+          containers:
+            - name: app
+              image: "<ACR_NAME>.azurecr.io/azure-workload-identity-app:v1.0.0"
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+              volumeMounts:
+                - name: azure-identity-token
+                  mountPath: /var/run/secrets/azure/tokens
+                  readOnly: true
+          volumes:
+            - name: azure-identity-token
+              projected:
+                sources:
+                  - serviceAccountToken:
+                      audience: api://AzureADTokenExchange
+                      expirationSeconds: 3600
+                      path: azure-identity-token
+          restartPolicy: OnFailure
+      backoffLimit: 3
