@@ -2,7 +2,7 @@
 
 ## Target
 
-Pod is authenticated with Azure Entra ID could add a row into table `Student` in customer-created database named `testing123`
+Pod is authenticated with Azure Entra ID could add a row into table `students` in customer-created database named `testing123`
 
 **Prerequisite**: Main initial Azure/Microsoft account
 
@@ -113,7 +113,7 @@ Create a aad federated service principal with above Managed Identity
 az login --use-device-code
 ```
 
-![alt text](../images/image5.png.png)
+![alt text](../images/image5.png)
 
 2. Get access token
 
@@ -145,7 +145,7 @@ Confirm current logged-in user
 CREATE DATABASE testing123;
 \c testing123
 
-CREATE TABLE student (
+CREATE TABLE students (
   student_id VARCHAR(64) PRIMARY KEY,
   student_name TEXT NOT NULL,
   student_age INT,
@@ -186,16 +186,18 @@ kubectl apply -f . -n testing
 
 Verify running service, add a row then auto restarted
 
-![alt text](image11.png)
+![alt text](../images/image11.png)
 
 Verify logs
 
-![alt text](image12.png)
+![alt text](../images/image12.png)
 
 Verify data
 
 ```sql
-SELECT * FROM student;
+SELECT * FROM students;
 ```
+
+![alt text](../images/image13.png)
 
 Official Docs: [Connect with managed identity in Azure Database for PostgreSQL flexible server](https://learn.microsoft.com/en-us/azure/postgresql/security/security-connect-with-managed-identity)
