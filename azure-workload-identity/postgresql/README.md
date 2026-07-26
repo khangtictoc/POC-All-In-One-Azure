@@ -16,6 +16,9 @@ cd `java-postgres-wi-app`
 
 Build & Push Docker Image
 
+- Registry: docker.io (Docker Hub)
+- Repo: darkhero101
+
 `docker build --no-cache -t docker.io/darkhero101/java-postgres-wi-service:14.0.0 .`
 
 `docker push  docker.io/darkhero101/java-postgres-wi-service:14.0.0`
