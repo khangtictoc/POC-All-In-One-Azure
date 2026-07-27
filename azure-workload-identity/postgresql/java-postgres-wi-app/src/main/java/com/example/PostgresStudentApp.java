@@ -56,22 +56,24 @@ public class PostgresStudentApp {
             OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
             insertStudent(connection, studentId, studentName, studentAge, studentMajor, now);
 
-            logger.info("Student {} inserted successfully with timestamp {}", studentId, now);
+            logger.info("Student {} inserted/updated successfully with timestamp {}", studentId, now);
         } catch (SQLException e) {
             logger.error("Failed to connect/insert: {}", e.getMessage(), e);
         }
     }
 
     private static void createStudentTableIfNeeded(Connection connection) throws SQLException {
+        // Plain DDL statement — no bind parameters here, so a Statement (not
+        // PreparedStatement) is correct and required.
         String sql = """
-            INSERT INTO students (id, name, age, major, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT (id) DO UPDATE SET
-                name = EXCLUDED.name,
-                age = EXCLUDED.age,
-                major = EXCLUDED.major,
-                created_at = EXCLUDED.created_at
-            """;
+                CREATE TABLE IF NOT EXISTS students (
+                    id VARCHAR(10) PRIMARY KEY,
+                    name VARCHAR(100) NOT NULL,
+                    age INTEGER NOT NULL,
+                    major VARCHAR(100),
+                    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+                )
+                """;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
             logger.info("Ensured 'students' table exists");
@@ -79,7 +81,18 @@ public class PostgresStudentApp {
     }
 
     private static void insertStudent(Connection connection, String id, String name, int age, String major, OffsetDateTime timestamp) throws SQLException {
-        String sql = "INSERT INTO students (id, name, age, major, created_at) VALUES (?, ?, ?, ?, ?)";
+        // Upsert: re-running with the same id updates the row instead of
+        // failing with a duplicate-key error. Uses PreparedStatement so the
+        // "?" placeholders are real bind parameters, not literal characters.
+        String sql = """
+                INSERT INTO students (id, name, age, major, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT (id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    age = EXCLUDED.age,
+                    major = EXCLUDED.major,
+                    created_at = EXCLUDED.created_at
+                """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, id);
             ps.setString(2, name);

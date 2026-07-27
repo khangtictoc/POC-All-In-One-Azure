@@ -8,7 +8,7 @@ spec:
   serviceAccountName: testing
   containers:
     - name: java-postgres-wi-service
-      image: docker.io/darkhero101/java-postgres-wi-service:15.0.0
+      image: docker.io/darkhero101/java-postgres-wi-service:16.0.0
       imagePullPolicy: Always
       volumeMounts:
         - mountPath: /mnt/data
