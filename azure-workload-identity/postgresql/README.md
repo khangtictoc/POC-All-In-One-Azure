@@ -193,7 +193,7 @@ Verify running service, add a row then auto restarted
 
 Verify logs
 
-![alt text](image12.png)
+![alt text](../images/postgresql/image12.png)
 
 Verify data
 
