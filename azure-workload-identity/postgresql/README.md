@@ -27,15 +27,12 @@ Build & Push Docker Image
 
 Create PostgreSQL Flexible Server
 
-
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image1.png)
 
 - Noticable settings
   - Enable All network Firewall (For testing)
-
   - ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image2.png)
   - Enable Authentication for both Entra ID (must-have) and local account (for testing)
-
   - ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image3.png)
 
 Config JSON (Verified)
@@ -109,7 +106,6 @@ Config JSON (Verified)
 
 Create Managed Identity for Service (Pod) to consume
 
-
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image4.png)
 
 Create a aad federated service principal with above Managed Identity
@@ -119,7 +115,6 @@ Create a aad federated service principal with above Managed Identity
 ```bash
 az login --use-device-code
 ```
-
 
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image5.png)
 
@@ -135,16 +130,13 @@ Infor:
 - Port: 5432
 - Default DB name: postgres
 - User: tranhoangkhang09112001_gmail.com#EXT#@tranhoangkhang09112001gma (Get the name in Entra ID user in "Authentication" tab)
-
 - ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image6.png)
 
 PGPASSWORD="<ACCESS_TOKEN_ABOVE>" psql "host=testing83547328.postgres.database.azure.com port=5432 dbname=postgres user=tranhoangkhang09112001_gmail.com sslmode=require"
 
-
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image7.png)
 
 Confirm current logged-in user
-
 
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image8.png)
 
@@ -178,11 +170,9 @@ SELECT * FROM pgaadauth_create_principal_with_oid(
     false
 ```
 
-
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image9.png)
 
 Grant permission to target `testing123` table and `public` table
-
 
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image10.png)
 
@@ -199,11 +189,9 @@ kubectl apply -f . -n testing
 
 Verify running service, add a row then auto restarted
 
-
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image11.png)
 
 Verify logs
-
 
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image12.png)
 
@@ -212,7 +200,6 @@ Verify data
 ```sql
 SELECT * FROM students;
 ```
-
 
 ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image13.png)
 
