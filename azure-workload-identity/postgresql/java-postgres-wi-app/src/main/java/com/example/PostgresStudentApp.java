@@ -1,10 +1,8 @@
 package com.example;
 
 import com.azure.core.credential.AccessToken;
-// import com.azure.identity.DefaultAzureCredential;
-// import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.identity.WorkloadIdentityCredential;
-import com.azure.identity.WorkloadIdentityCredentialBuilder;
+import com.azure.identity.DefaultAzureCredential;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.core.credential.TokenRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +28,14 @@ public class PostgresStudentApp {
     private static final String DEFAULT_STUDENT_MAJOR = "Computer Science";
 
     // Scope for Azure Database for PostgreSQL – Flexible Server
+    // NOTE: must be "ossrdbms-aad", not "ossrdbms" — this was the root cause
+    // of the AADSTS500011 error during earlier debugging.
     private static final String AZURE_POSTGRES_SCOPE = "https://ossrdbms-aad.database.windows.net/.default";
 
-    // Object (principal) ID of the user-assigned managed identity "testing"
-    // Used as the database user login.
-    //private static final String MANAGED_IDENTITY_OBJECT_ID = "84e40c73-b56c-48f9-a332-7606886830a3";
+    // Postgres role name mapped to the managed identity's Object ID via
+    // pgaadauth_create_principal_with_oid. This is what goes in the JDBC
+    // "user" property — NOT the raw Object ID.
+    private static final String DB_USER = "testing";
 
     public static void main(String[] args) {
         String database = getEnv("DATABASE_NAME", DEFAULT_DATABASE);
@@ -63,14 +64,14 @@ public class PostgresStudentApp {
 
     private static void createStudentTableIfNeeded(Connection connection) throws SQLException {
         String sql = """
-                CREATE TABLE IF NOT EXISTS students (
-                    id VARCHAR(10) PRIMARY KEY,
-                    name VARCHAR(100) NOT NULL,
-                    age INTEGER NOT NULL,
-                    major VARCHAR(100),
-                    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-                )
-                """;
+            INSERT INTO students (id, name, age, major, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT (id) DO UPDATE SET
+                name = EXCLUDED.name,
+                age = EXCLUDED.age,
+                major = EXCLUDED.major,
+                created_at = EXCLUDED.created_at
+            """;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
             logger.info("Ensured 'students' table exists");
@@ -90,11 +91,12 @@ public class PostgresStudentApp {
     }
 
     private static Connection createAzurePostgresConnection(String jdbcUrl) throws SQLException {
-        // DefaultAzureCredential uses environment variable AZURE_CLIENT_ID
-        // when running in a Workload Identity enabled pod.
-        // DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
-        
-        WorkloadIdentityCredential credential = new WorkloadIdentityCredentialBuilder().build();
+        // DefaultAzureCredential tries a chain of credential types in order
+        // (Environment, WorkloadIdentity, ManagedIdentity, SharedTokenCache,
+        // IntelliJ, AzureCli, AzurePowerShell, AzureDeveloperCli).
+        // In a Workload-Identity-enabled AKS pod, WorkloadIdentityCredential
+        // succeeds and the chain stops there.
+        DefaultAzureCredential credential = new DefaultAzureCredentialBuilder().build();
 
         TokenRequestContext request = new TokenRequestContext().addScopes(AZURE_POSTGRES_SCOPE);
         AccessToken token = credential.getToken(request).block();
@@ -105,8 +107,8 @@ public class PostgresStudentApp {
         logger.info("Obtained Azure AD token for scope {}", AZURE_POSTGRES_SCOPE);
 
         Properties props = new Properties();
-        // Use the object ID of the managed identity as the database user
-        props.setProperty("user", "testing");
+        // Postgres role name (mapped to managed identity OID via pgaadauth), not the raw OID
+        props.setProperty("user", DB_USER);
         // Token becomes the password
         props.setProperty("password", token.getToken());
         props.setProperty("sslmode", "require");
