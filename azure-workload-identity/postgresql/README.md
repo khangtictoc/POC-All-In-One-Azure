@@ -130,7 +130,6 @@ Key specs:
 - Port: 5432
 - Default DB name: postgres
 - User: tranhoangkhang09112001_gmail.com#EXT#@tranhoangkhang09112001gma (Get the name in Entra ID user in "Authentication" tab)
-- ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image6.png)
 
 ![alt text](../images/postgresql/image6.png)
 
