@@ -124,15 +124,18 @@ az login --use-device-code
 az account get-access-token --resource-type oss-rdbms --query accessToken -o tsv
 ```
 
-Infor:
+Key specs:
 
 - Host: testing83547328.postgres.database.azure.com
 - Port: 5432
 - Default DB name: postgres
 - User: tranhoangkhang09112001_gmail.com#EXT#@tranhoangkhang09112001gma (Get the name in Entra ID user in "Authentication" tab)
-- ![alt text](../images/postgresql/image6.png)
 
+![alt text](../images/postgresql/image6.png)
+
+```bash
 PGPASSWORD="<ACCESS_TOKEN_ABOVE>" psql "host=testing83547328.postgres.database.azure.com port=5432 dbname=postgres user=tranhoangkhang09112001_gmail.com sslmode=require"
+```
 
 ![alt text](../images/postgresql/image7.png)
 

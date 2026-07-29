@@ -130,15 +130,15 @@ Or CLI
 # Grant Storage Blob Data Contributor role to the Managed Identity (must-have)
 # This allows the identity to read/write/delete blobs in the container
 az role assignment create \
-  --role "Owner" \
+  --role "Owner" \ # FOR TESTING ONLY
   --assignee <identity-client-id> \
   --scope /subscriptions/ac90b42a-8ba9-48f5-9479-94dfd054e40d/resourceGroups/dummy1/providers/Microsoft.Storage/storageAccounts/testing1231254984
-```
 
 az role assignment create \
- --role "Storage Blob Data Contributor" \
+ --role "Storage Blob Data Contributor" \ # MUST-HAVE ROLE
  --assignee <identity-client-id> \
  --scope /subscriptions/ac90b42a-8ba9-48f5-9479-94dfd054e40d/resourceGroups/dummy1/providers/Microsoft.Storage/storageAccounts/testing1231254984
+```
 
 Verify role assignment:
 
