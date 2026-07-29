@@ -27,7 +27,7 @@ Build & Push Docker Image
 
 Create Storage Account
 
-![alt text](../images/storage-account/image1.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image1.png)
 
 Create Blob Container
 
@@ -35,7 +35,7 @@ Create Blob Container
 - Name: `testing`
 - Public access level: Private (no anonymous access)
 
-![alt text](../images/storage-account/image2.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image2.png)
 
 Config JSON (Verified)
 
@@ -116,13 +116,13 @@ Config JSON (Verified)
 
 Create Managed Identity for Service (Pod) to consume
 
-![alt text](../images/storage-account/image4.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image4.png)
 
 **Grant RBAC Role to Managed Identity**
 
 Azure Portal
 
-![alt text](../images/storage-account/image3.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image3.png)
 
 Or CLI
 
@@ -154,7 +154,7 @@ az role assignment list \
 
 Azure Portal
 
-![alt text](../images/storage-account/image5.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image5.png)
 
 Or
 
@@ -181,11 +181,11 @@ kubectl apply -f . -n testing
 
 Verify running service, upload a timestamped file then auto completed
 
-![alt text](../images/storage-account/image7.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image7.png)
 
 Verify logs
 
-![alt text](../images/storage-account/image8.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image8.png)
 
 Verify uploaded blob
 
@@ -197,6 +197,6 @@ az storage blob list \
   --output table
 ```
 
-![alt text](../images/storage-account/image6.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/storage-account/image6.png)
 
 Official Docs: [Use Azure AD workload identity with Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview)

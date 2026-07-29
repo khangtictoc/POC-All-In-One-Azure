@@ -27,13 +27,13 @@ Build & Push Docker Image
 
 Create PostgreSQL Flexible Server
 
-![alt text](../images/postgresql/image1.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image1.png)
 
 - Noticable settings
   - Enable All network Firewall (For testing)
-  - ![alt text](../images/postgresql/image2.png)
+  - ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image2.png)
   - Enable Authentication for both Entra ID (must-have) and local account (for testing)
-  - ![alt text](../images/postgresql/image3.png)
+  - ![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image3.png)
 
 Config JSON (Verified)
 
@@ -106,7 +106,7 @@ Config JSON (Verified)
 
 Create Managed Identity for Service (Pod) to consume
 
-![alt text](../images/postgresql/image4.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image4.png)
 
 Create a aad federated service principal with above Managed Identity
 
@@ -116,7 +116,7 @@ Create a aad federated service principal with above Managed Identity
 az login --use-device-code
 ```
 
-![alt text](../images/postgresql/image5.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image5.png)
 
 2. Get access token
 
@@ -137,11 +137,11 @@ Key specs:
 PGPASSWORD="<ACCESS_TOKEN_ABOVE>" psql "host=testing83547328.postgres.database.azure.com port=5432 dbname=postgres user=tranhoangkhang09112001_gmail.com sslmode=require"
 ```
 
-![alt text](../images/postgresql/image7.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image7.png)
 
 Confirm current logged-in user
 
-![alt text](../images/postgresql/image8.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image8.png)
 
 ---
 
@@ -173,11 +173,11 @@ SELECT * FROM pgaadauth_create_principal_with_oid(
     false
 ```
 
-![alt text](../images/postgresql/image9.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image9.png)
 
 Grant permission to target `testing123` table and `public` table
 
-![alt text](../images/postgresql/image10.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image10.png)
 
 ### 4. Deploy
 
@@ -192,11 +192,11 @@ kubectl apply -f . -n testing
 
 Verify running service, add a row then auto restarted
 
-![alt text](../images/postgresql/image11.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image11.png)
 
 Verify logs
 
-![alt text](../images/postgresql/image12.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image12.png)
 
 Verify data
 
@@ -204,6 +204,6 @@ Verify data
 SELECT * FROM students;
 ```
 
-![alt text](../images/postgresql/image13.png)
+![alt text](https://cdn.jsdelivr.net/gh/khangtictoc/POC-All-In-One-Azure@main/azure-workload-identity/images/postgresql/image13.png)
 
 Official Docs: [Connect with managed identity in Azure Database for PostgreSQL flexible server](https://learn.microsoft.com/en-us/azure/postgresql/security/security-connect-with-managed-identity)
